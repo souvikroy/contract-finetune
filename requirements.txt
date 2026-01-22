@@ -1,8 +1,7 @@
 # Core dependencies
 streamlit>=1.28.0
 langchain>=0.1.0
-langchain-anthropic>=0.1.0
-anthropic>=0.18.0
+openai>=1.0.0
 
 # Vector database and embeddings
 chromadb>=0.4.15
@@ -29,3 +28,16 @@ python-json-logger>=2.0.7
 # Testing
 pytest>=7.4.0
 pytest-cov>=4.1.0
+
+# Fine-tuning dependencies
+torch>=2.0.0
+transformers>=4.35.0
+peft>=0.6.0
+bitsandbytes>=0.41.0
+accelerate>=0.24.0
+datasets>=2.14.0
+sentencepiece>=0.1.99
+tensorboard>=2.14.0
+wandb>=0.15.0
+rouge-score>=0.1.2
+nltk>=3.8.1

@@ -9,8 +9,8 @@ services:
     ports:
       - "8501:8501"
     environment:
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-3-5-sonnet-20241022}
+      - LM_STUDIO_API_URL=${LM_STUDIO_API_URL:-http://192.168.0.4:1601}
+      - LM_STUDIO_MODEL=${LM_STUDIO_MODEL:-qwen/qwen3-vl-4b}
       - VECTOR_DB_TYPE=${VECTOR_DB_TYPE:-chromadb}
       - CACHE_ENABLED=${CACHE_ENABLED:-true}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}

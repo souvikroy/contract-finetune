@@ -24,13 +24,10 @@ spec:
         ports:
         - containerPort: 8501
         env:
-        - name: ANTHROPIC_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: anthropic-secret
-              key: api-key
-        - name: CLAUDE_MODEL
-          value: "claude-3-5-sonnet-20241022"
+        - name: LM_STUDIO_API_URL
+          value: "http://192.168.0.4:1601"
+        - name: LM_STUDIO_MODEL
+          value: "qwen/qwen3-vl-4b"
         - name: VECTOR_DB_TYPE
           value: "chromadb"
         - name: CACHE_ENABLED

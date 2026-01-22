@@ -1,6 +1,6 @@
 """LangChain RAG chain for Q&A."""
 from typing import List, Dict, Any, Optional
-from src.llm.claude_client import ClaudeClient
+from src.llm.lm_studio_client import LMStudioClient
 from src.llm.prompts import LegalPrompts
 from src.rag.retriever import HybridRetriever
 
@@ -8,10 +8,10 @@ from src.rag.retriever import HybridRetriever
 class RAGChain:
     """RAG chain combining retrieval, augmentation, and generation."""
     
-    def __init__(self, retriever: HybridRetriever, claude_client: Optional[ClaudeClient] = None):
+    def __init__(self, retriever: HybridRetriever, llm_client: Optional[LMStudioClient] = None):
         """Initialize RAG chain."""
         self.retriever = retriever
-        self.claude_client = claude_client or ClaudeClient()
+        self.llm_client = llm_client or LMStudioClient()
         self.prompts = LegalPrompts()
     
     def query(self, question: str, n_context: int = 5, use_keyword: bool = True) -> Dict[str, Any]:
@@ -26,11 +26,11 @@ class RAGChain:
         # Format context from retrieved documents
         context = self._format_context(retrieved_docs)
         
-        # Generate answer using Claude
+        # Generate answer using LM Studio
         prompt = self.prompts.format_qa_prompt(context=context, question=question)
         
         messages = [{'role': 'user', 'content': prompt}]
-        answer = self.claude_client.invoke(
+        answer = self.llm_client.invoke(
             messages=messages,
             system_prompt=self.prompts.SYSTEM_PROMPT
         )
@@ -60,7 +60,7 @@ class RAGChain:
         
         # Stream response
         full_answer = ""
-        for chunk in self.claude_client.stream(messages, system_prompt=self.prompts.SYSTEM_PROMPT):
+        for chunk in self.llm_client.stream(messages, system_prompt=self.prompts.SYSTEM_PROMPT):
             full_answer += chunk
             yield {
                 'chunk': chunk,
@@ -80,7 +80,7 @@ class RAGChain:
         prompt = self.prompts.format_clause_extraction_prompt(context=context, query=query)
         
         messages = [{'role': 'user', 'content': prompt}]
-        extraction_result = self.claude_client.invoke(
+        extraction_result = self.llm_client.invoke(
             messages=messages,
             system_prompt=self.prompts.SYSTEM_PROMPT
         )
@@ -96,7 +96,7 @@ class RAGChain:
         prompt = self.prompts.format_classification_prompt(clause_text=clause_text)
         messages = [{'role': 'user', 'content': prompt}]
         
-        classification = self.claude_client.invoke(
+        classification = self.llm_client.invoke(
             messages=messages,
             system_prompt=self.prompts.SYSTEM_PROMPT
         )

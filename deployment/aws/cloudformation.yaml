@@ -2,10 +2,14 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Legal Contract Chatbot - AWS CloudFormation Template'
 
 Parameters:
-  AnthropicAPIKey:
+  LMStudioAPIUrl:
     Type: String
-    Description: Anthropic API Key
-    NoEcho: true
+    Default: http://192.168.0.4:1601
+    Description: LM Studio API URL
+  LMStudioModel:
+    Type: String
+    Default: qwen/qwen3-vl-4b
+    Description: LM Studio Model Name
   
   InstanceType:
     Type: String
@@ -110,10 +114,10 @@ Resources:
             - ContainerPort: 8501
               Protocol: tcp
           Environment:
-            - Name: ANTHROPIC_API_KEY
-              Value: !Ref AnthropicAPIKey
-            - Name: CLAUDE_MODEL
-              Value: claude-3-5-sonnet-20241022
+            - Name: LM_STUDIO_API_URL
+              Value: !Ref LMStudioAPIUrl
+            - Name: LM_STUDIO_MODEL
+              Value: !Ref LMStudioModel
           LogConfiguration:
             LogDriver: awslogs
             Options:

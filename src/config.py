@@ -11,9 +11,9 @@ load_dotenv()
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
-    # Claude API Configuration
-    anthropic_api_key: str = Field(..., env="ANTHROPIC_API_KEY")
-    claude_model: str = Field(default="claude-3-5-sonnet-20241022", env="CLAUDE_MODEL")
+    # LM Studio API Configuration
+    lm_studio_api_url: str = Field(default="http://192.168.0.4:1601", env="LM_STUDIO_API_URL")
+    lm_studio_model: str = Field(default="qwen/qwen3-vl-4b", env="LM_STUDIO_MODEL")
     max_tokens: int = Field(default=4096, env="MAX_TOKENS")
     temperature: float = Field(default=0.1, env="TEMPERATURE")
     
@@ -44,6 +44,17 @@ class Settings(BaseSettings):
     
     # Contract Data
     contract_json_path: str = Field(default="./RFP_parsed.json", env="CONTRACT_JSON_PATH")
+    
+    # Fine-tuning Configuration
+    finetuning_enabled: bool = Field(default=False, env="FINETUNING_ENABLED")
+    finetuning_model_path: Optional[str] = Field(default=None, env="FINETUNING_MODEL_PATH")
+    finetuning_base_model: str = Field(default="Qwen/Qwen2.5-7B-Instruct", env="FINETUNING_BASE_MODEL")
+    finetuning_adapter_name: Optional[str] = Field(default=None, env="FINETUNING_ADAPTER_NAME")
+    use_merged_model: bool = Field(default=False, env="USE_MERGED_MODEL")
+    training_data_path: Optional[str] = Field(default=None, env="TRAINING_DATA_PATH")
+    lora_r: int = Field(default=16, env="LORA_R")
+    lora_alpha: int = Field(default=32, env="LORA_ALPHA")
+    lora_dropout: float = Field(default=0.05, env="LORA_DROPOUT")
     
     class Config:
         env_file = ".env"
