@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: contract-chatbot
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contract-chatbot
+  namespace: contract-chatbot
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: contract-chatbot
+  template:
+    metadata:
+      labels:
+        app: contract-chatbot
+    spec:
+      containers:
+      - name: chatbot
+        image: contract-chatbot:latest
+        ports:
+        - containerPort: 8501
+        env:
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: anthropic-secret
+              key: api-key
+        - name: CLAUDE_MODEL
+          value: "claude-3-5-sonnet-20241022"
+        - name: VECTOR_DB_TYPE
+          value: "chromadb"
+        - name: CACHE_ENABLED
+          value: "true"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /_stcore/health
+            port: 8501
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_stcore/health
+            port: 8501
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contract-chatbot-service
+  namespace: contract-chatbot
+spec:
+  selector:
+    app: contract-chatbot
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8501
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: contract-chatbot-hpa
+  namespace: contract-chatbot
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: contract-chatbot
+  minReplicas: 1
+  maxReplicas: 100
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
