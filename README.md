@@ -1,4 +1,4 @@
-# Legal Contract Chatbot
+# Legal Contract Management
 
 A production-ready Streamlit chatbot for legal contract analysis using Claude API, LangChain, and RAG (Retrieval-Augmented Generation).
 
