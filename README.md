@@ -177,10 +177,6 @@ Access metrics dashboard:
 - In Streamlit UI: Click "View Metrics" in sidebar
 - Metrics include: latency, error rate, request count, function-level stats
 
-## License
-
-MIT License
-
 ## Contributing
 
 Contributions welcome! Please open an issue or submit a PR.
