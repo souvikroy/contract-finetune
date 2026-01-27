@@ -177,6 +177,70 @@ Access metrics dashboard:
 - In Streamlit UI: Click "View Metrics" in sidebar
 - Metrics include: latency, error rate, request count, function-level stats
 
+## Finetuning : PEFT configuration
+
+LoRA parameters:
+- r (rank): 16 — controls LoRA matrix rank
+- lora_alpha: 32 — scaling factor (typically 2x rank)
+- lora_dropout: 0.05 — dropout for regularization
+
+Target modules (where adapters are applied):
+- q_proj, k_proj, v_proj, o_proj (attention)
+- gate_proj, up_proj, down_proj (MLP)
+
+QLoRA (4-bit quantization):
+- Reduces memory by ~75%
+- NF4 quantization
+- Double quantization enabled
+- Float16 compute dtype
+
+# Training pipeline - 6-step pipeline:
+
+Step 1: Prepare data
+
+- Generate Q&A pairs
+- Augment data
+- Split dataset
+- Save as JSONL
+
+Step 2: Setup model
+- Load base Qwen model
+- Load tokenizer
+- Apply quantization (if QLoRA)
+
+Step 3: Configure PEFT
+- Create LoRA config
+- Apply to model
+- Freeze base model
+- Only train adapters (~0.1-0.2% of parameters)
+
+Step 4: Train
+- Training config:
+-- Epochs: 3
+-- Batch size: 4
+-- Gradient accumulation: 4 (effective batch = 16)
+-- Learning rate: 2e-4
+-- FP16 mixed precision
+-- Gradient checkpointing
+-- Checkpoint every 500 steps
+
+Step 5: Evaluate
+- Metrics: BLEU, ROUGE-1/2/L, Exact Match
+- Legal-specific metrics
+- Save evaluation report
+
+Step 6: Export model
+- Option 1: Save adapters only (~50-100MB)
+- Option 2: Merge adapters (~14GB standalone model)
+- Evaluator (src/finetuning/evaluator.py)
+
+Metrics:
+- BLEU: N-gram overlap
+- ROUGE-1, ROUGE-2, ROUGE-L: Recall metrics
+- Exact Match: Exact answer accuracy
+- Business metrics: Citation accuracy, terminology
+
+
 ## Contributing
 
 Contributions welcome! Please open an issue or submit a PR.
